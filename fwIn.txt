@@ -1,0 +1,159 @@
+Content-Length: 1220
+
+{"params":{"workspaceFolders":[{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs","name":"AnimateProofs"}],"trace":"off","rootUri":"file:///g%3A/Protramming/Lean/AnimateProofs","processId":22952,"initializationOptions":{"hasWidgets":true,"editDelay":100},"clientInfo":{"version":"1.99.0","name":"Visual Studio Code"},"capabilities":{"workspace":{"workspaceEdit":{"resourceOperations":["create","rename","delete"],"documentChanges":true,"changeAnnotationSupport":{"groupsOnLabel":true}},"applyEdit":true},"window":{"showDocument":{"support":true}},"textDocument":{"inlayHint":{"resolveSupport":{"properties":["tooltip","textEdits","label.tooltip","label.location","label.command"]},"dynamicRegistration":true},"completion":{"completionItem":{"insertReplaceSupport":true}},"codeAction":{"resolveSupport":{"properties":["edit"]},"isPreferredSupport":true,"honorsChangeAnnotations":false,"dynamicRegistration":true,"disabledSupport":true,"dataSupport":true,"codeActionLiteralSupport":{"codeActionKind":{"valueSet":["","quickfix","refactor","refactor.extract","refactor.inline","refactor.rewrite","source","source.organizeImports"]}}}},"lean":{"silentDiagnosticSupport":true}}},"method":"initialize","jsonrpc":"2.0","id":0}Content-Length: 2532
+
+{"params":{"textDocument":{"version":1,"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean","text":"import Lean\nimport Batteries\nimport Mathlib.Tactic\nimport Lean.Elab\n\nopen Lean\nopen Lean Elab\n\n\n#eval 1 + 2\n\ndef main : IO Unit := do\n  IO.println \"Hello, Lean!\"\n\nunsafe def processCommands : Frontend.FrontendM (List (Environment × InfoState)) := do\n  let done ← Lean.Elab.Frontend.processCommand\n  let st := ← get\n  let infoState := st.commandState.infoState\n  let env' := st.commandState.env\n\n  -- clear the infostate\n  set {st with commandState := {st.commandState with infoState := {}}}\n  if done\n  then return [(env', infoState)]\n  else\n    return (env', infoState) :: (←processCommands)\n\nunsafe def processFile (filePath : String) : IO Unit := do\n  let mut input ← IO.FS.readFile filePath -- reads the contents of the file\n  let inputCtx := Lean.Parser.mkInputContext filePath input --\n  let (header, parserState, messages) ← Lean.Parser.parseHeader inputCtx\n  let (env, messages) ← Lean.Elab.processHeader header {} messages inputCtx\n\n  IO.println s!\"{filePath}\"\n\n  let env := env.setMainModule (← Lean.moduleNameOfFileName filePath none)\n\n  let commandState := { Lean.Elab.Command.mkState env messages {} with infoState.enabled := true }\n\n  let (steps, _frontendState) ← (processCommands { inputCtx := inputCtx }).run\n    { commandState := commandState, parserState := parserState, cmdPos := parserState.pos }\n\n  for ⟨env, s⟩ in steps do\n    for tree in s.trees do\n      IO.println (Format.pretty (←tree.format))\n      let flattened := tree.context\n      for ⟨goal _⟩ in flattened do\n        IO.println (Format.pretty (←goal.format))\n\n  throw <| IO.userError s!\"{steps.length} steps\"\n\n\n\n-- #eval processFile \"AnimateProofs/Test.lean\"\n\n\n/-\n-- read the infotree of a given file\nopen Lean\nopen System\n\ndef readInfoTree (filePath : String) : IO Unit := do\n  let env ← importModules [{ module := `Init }] {}\n  let input ← IO.FS.readFile filePath\n  let (_, infoTree) ← Lean.Elab.Command.elabCommand input env\n  IO.println infoTree\n\n-- Example usage\n#eval readInfoTree \"C:\\Users\\lukec\\OneDrive\\Documents\\AnimateProofs\\AnimateProofs\\Test.lean\"\n-/\n\n/-\nset_option trace.Elab.info true\nexample : 2 = 1 + 1 := by\n  show 1 + 1 = 2\n  rw[one_add_one_eq_two]\n\nset_option trace.Elab.info false\n-/\n","languageId":"lean"},"dependencyBuildMode":"once"},"method":"textDocument/didOpen","jsonrpc":"2.0"}Content-Length: 276
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"range":{"start":{"line":29,"character":44},"end":{"line":29,"character":44}},"context":{"triggerKind":2,"diagnostics":[]}},"method":"textDocument/codeAction","jsonrpc":"2.0","id":11}Content-Length: 38
+
+{"result":null,"jsonrpc":"2.0","id":0}Content-Length: 38
+
+{"result":null,"jsonrpc":"2.0","id":1}Content-Length: 227
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"range":{"start":{"line":0,"character":0},"end":{"line":79,"character":0}}},"method":"textDocument/inlayHint","jsonrpc":"2.0","id":12}Content-Length: 38
+
+{"result":null,"jsonrpc":"2.0","id":2}Content-Length: 38
+
+{"result":null,"jsonrpc":"2.0","id":3}Content-Length: 38
+
+{"result":null,"jsonrpc":"2.0","id":4}Content-Length: 276
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"range":{"start":{"line":29,"character":44},"end":{"line":29,"character":44}},"context":{"triggerKind":2,"diagnostics":[]}},"method":"textDocument/codeAction","jsonrpc":"2.0","id":13}Content-Length: 63
+
+{"params":{"id":11},"method":"$/cancelRequest","jsonrpc":"2.0"}Content-Length: 38
+
+{"result":null,"jsonrpc":"2.0","id":5}Content-Length: 185
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"position":{"line":0,"character":10}},"method":"textDocument/hover","jsonrpc":"2.0","id":14}Content-Length: 63
+
+{"params":{"id":14},"method":"$/cancelRequest","jsonrpc":"2.0"}Content-Length: 184
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"position":{"line":0,"character":8}},"method":"textDocument/hover","jsonrpc":"2.0","id":15}Content-Length: 435
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"range":{"start":{"line":0,"character":0},"end":{"line":1,"character":0}},"context":{"triggerKind":1,"only":["quickfix"],"diagnostics":[{"severity":3,"range":{"start":{"line":0,"character":0},"end":{"line":1,"character":0}},"message":"✔ [8/142] Built Batteries.Lean.HashMap\n"}]}},"method":"textDocument/codeAction","jsonrpc":"2.0","id":16}Content-Length: 38
+
+{"result":null,"jsonrpc":"2.0","id":6}Content-Length: 276
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"range":{"start":{"line":29,"character":44},"end":{"line":29,"character":44}},"context":{"triggerKind":2,"diagnostics":[]}},"method":"textDocument/codeAction","jsonrpc":"2.0","id":17}Content-Length: 63
+
+{"params":{"id":13},"method":"$/cancelRequest","jsonrpc":"2.0"}Content-Length: 441
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"range":{"start":{"line":0,"character":0},"end":{"line":1,"character":0}},"context":{"triggerKind":1,"only":["quickfix"],"diagnostics":[{"severity":3,"range":{"start":{"line":0,"character":0},"end":{"line":1,"character":0}},"message":"✔ [12/142] Built Batteries.Lean.TagAttribute\n"}]}},"method":"textDocument/codeAction","jsonrpc":"2.0","id":18}Content-Length: 63
+
+{"params":{"id":16},"method":"$/cancelRequest","jsonrpc":"2.0"}Content-Length: 276
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"range":{"start":{"line":29,"character":44},"end":{"line":29,"character":44}},"context":{"triggerKind":2,"diagnostics":[]}},"method":"textDocument/codeAction","jsonrpc":"2.0","id":19}Content-Length: 63
+
+{"params":{"id":17},"method":"$/cancelRequest","jsonrpc":"2.0"}Content-Length: 38
+
+{"result":null,"jsonrpc":"2.0","id":7}Content-Length: 276
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"range":{"start":{"line":29,"character":44},"end":{"line":29,"character":44}},"context":{"triggerKind":2,"diagnostics":[]}},"method":"textDocument/codeAction","jsonrpc":"2.0","id":20}Content-Length: 63
+
+{"params":{"id":19},"method":"$/cancelRequest","jsonrpc":"2.0"}Content-Length: 276
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"range":{"start":{"line":29,"character":44},"end":{"line":29,"character":44}},"context":{"triggerKind":2,"diagnostics":[]}},"method":"textDocument/codeAction","jsonrpc":"2.0","id":21}Content-Length: 63
+
+{"params":{"id":20},"method":"$/cancelRequest","jsonrpc":"2.0"}Content-Length: 276
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"range":{"start":{"line":29,"character":44},"end":{"line":29,"character":44}},"context":{"triggerKind":2,"diagnostics":[]}},"method":"textDocument/codeAction","jsonrpc":"2.0","id":22}Content-Length: 63
+
+{"params":{"id":21},"method":"$/cancelRequest","jsonrpc":"2.0"}Content-Length: 38
+
+{"result":null,"jsonrpc":"2.0","id":8}Content-Length: 276
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"range":{"start":{"line":29,"character":44},"end":{"line":29,"character":44}},"context":{"triggerKind":2,"diagnostics":[]}},"method":"textDocument/codeAction","jsonrpc":"2.0","id":23}Content-Length: 63
+
+{"params":{"id":22},"method":"$/cancelRequest","jsonrpc":"2.0"}Content-Length: 276
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"range":{"start":{"line":29,"character":44},"end":{"line":29,"character":44}},"context":{"triggerKind":2,"diagnostics":[]}},"method":"textDocument/codeAction","jsonrpc":"2.0","id":24}Content-Length: 63
+
+{"params":{"id":23},"method":"$/cancelRequest","jsonrpc":"2.0"}Content-Length: 276
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"range":{"start":{"line":29,"character":44},"end":{"line":29,"character":44}},"context":{"triggerKind":2,"diagnostics":[]}},"method":"textDocument/codeAction","jsonrpc":"2.0","id":25}Content-Length: 63
+
+{"params":{"id":24},"method":"$/cancelRequest","jsonrpc":"2.0"}Content-Length: 38
+
+{"result":null,"jsonrpc":"2.0","id":9}Content-Length: 276
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"range":{"start":{"line":29,"character":44},"end":{"line":29,"character":44}},"context":{"triggerKind":2,"diagnostics":[]}},"method":"textDocument/codeAction","jsonrpc":"2.0","id":26}Content-Length: 63
+
+{"params":{"id":25},"method":"$/cancelRequest","jsonrpc":"2.0"}Content-Length: 276
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"range":{"start":{"line":29,"character":44},"end":{"line":29,"character":44}},"context":{"triggerKind":2,"diagnostics":[]}},"method":"textDocument/codeAction","jsonrpc":"2.0","id":27}Content-Length: 63
+
+{"params":{"id":26},"method":"$/cancelRequest","jsonrpc":"2.0"}Content-Length: 276
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"range":{"start":{"line":29,"character":44},"end":{"line":29,"character":44}},"context":{"triggerKind":2,"diagnostics":[]}},"method":"textDocument/codeAction","jsonrpc":"2.0","id":28}Content-Length: 63
+
+{"params":{"id":27},"method":"$/cancelRequest","jsonrpc":"2.0"}Content-Length: 39
+
+{"result":null,"jsonrpc":"2.0","id":10}Content-Length: 276
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"range":{"start":{"line":29,"character":44},"end":{"line":29,"character":44}},"context":{"triggerKind":2,"diagnostics":[]}},"method":"textDocument/codeAction","jsonrpc":"2.0","id":29}Content-Length: 63
+
+{"params":{"id":28},"method":"$/cancelRequest","jsonrpc":"2.0"}Content-Length: 276
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"range":{"start":{"line":29,"character":44},"end":{"line":29,"character":44}},"context":{"triggerKind":2,"diagnostics":[]}},"method":"textDocument/codeAction","jsonrpc":"2.0","id":30}Content-Length: 63
+
+{"params":{"id":29},"method":"$/cancelRequest","jsonrpc":"2.0"}Content-Length: 276
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"range":{"start":{"line":29,"character":44},"end":{"line":29,"character":44}},"context":{"triggerKind":2,"diagnostics":[]}},"method":"textDocument/codeAction","jsonrpc":"2.0","id":31}Content-Length: 63
+
+{"params":{"id":30},"method":"$/cancelRequest","jsonrpc":"2.0"}Content-Length: 39
+
+{"result":null,"jsonrpc":"2.0","id":11}Content-Length: 276
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"range":{"start":{"line":29,"character":44},"end":{"line":29,"character":44}},"context":{"triggerKind":2,"diagnostics":[]}},"method":"textDocument/codeAction","jsonrpc":"2.0","id":32}Content-Length: 63
+
+{"params":{"id":31},"method":"$/cancelRequest","jsonrpc":"2.0"}Content-Length: 276
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"range":{"start":{"line":29,"character":44},"end":{"line":29,"character":44}},"context":{"triggerKind":2,"diagnostics":[]}},"method":"textDocument/codeAction","jsonrpc":"2.0","id":33}Content-Length: 63
+
+{"params":{"id":32},"method":"$/cancelRequest","jsonrpc":"2.0"}Content-Length: 63
+
+{"params":{"id":15},"method":"$/cancelRequest","jsonrpc":"2.0"}Content-Length: 63
+
+{"params":{"id":18},"method":"$/cancelRequest","jsonrpc":"2.0"}Content-Length: 276
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"range":{"start":{"line":29,"character":44},"end":{"line":29,"character":44}},"context":{"triggerKind":2,"diagnostics":[]}},"method":"textDocument/codeAction","jsonrpc":"2.0","id":34}Content-Length: 63
+
+{"params":{"id":33},"method":"$/cancelRequest","jsonrpc":"2.0"}Content-Length: 276
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"range":{"start":{"line":29,"character":44},"end":{"line":29,"character":44}},"context":{"triggerKind":2,"diagnostics":[]}},"method":"textDocument/codeAction","jsonrpc":"2.0","id":35}Content-Length: 63
+
+{"params":{"id":34},"method":"$/cancelRequest","jsonrpc":"2.0"}Content-Length: 276
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"range":{"start":{"line":29,"character":44},"end":{"line":29,"character":44}},"context":{"triggerKind":2,"diagnostics":[]}},"method":"textDocument/codeAction","jsonrpc":"2.0","id":36}Content-Length: 63
+
+{"params":{"id":35},"method":"$/cancelRequest","jsonrpc":"2.0"}Content-Length: 276
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"range":{"start":{"line":29,"character":44},"end":{"line":29,"character":44}},"context":{"triggerKind":2,"diagnostics":[]}},"method":"textDocument/codeAction","jsonrpc":"2.0","id":37}Content-Length: 63
+
+{"params":{"id":36},"method":"$/cancelRequest","jsonrpc":"2.0"}Content-Length: 276
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"range":{"start":{"line":29,"character":44},"end":{"line":29,"character":44}},"context":{"triggerKind":2,"diagnostics":[]}},"method":"textDocument/codeAction","jsonrpc":"2.0","id":38}Content-Length: 63
+
+{"params":{"id":37},"method":"$/cancelRequest","jsonrpc":"2.0"}Content-Length: 276
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"range":{"start":{"line":29,"character":44},"end":{"line":29,"character":44}},"context":{"triggerKind":2,"diagnostics":[]}},"method":"textDocument/codeAction","jsonrpc":"2.0","id":39}Content-Length: 63
+
+{"params":{"id":38},"method":"$/cancelRequest","jsonrpc":"2.0"}Content-Length: 276
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"range":{"start":{"line":29,"character":44},"end":{"line":29,"character":44}},"context":{"triggerKind":2,"diagnostics":[]}},"method":"textDocument/codeAction","jsonrpc":"2.0","id":40}Content-Length: 63
+
+{"params":{"id":39},"method":"$/cancelRequest","jsonrpc":"2.0"}Content-Length: 276
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"range":{"start":{"line":29,"character":44},"end":{"line":29,"character":44}},"context":{"triggerKind":2,"diagnostics":[]}},"method":"textDocument/codeAction","jsonrpc":"2.0","id":41}Content-Length: 63
+
+{"params":{"id":40},"method":"$/cancelRequest","jsonrpc":"2.0"}Content-Length: 276
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"range":{"start":{"line":29,"character":44},"end":{"line":29,"character":44}},"context":{"triggerKind":2,"diagnostics":[]}},"method":"textDocument/codeAction","jsonrpc":"2.0","id":42}Content-Length: 63
+
+{"params":{"id":41},"method":"$/cancelRequest","jsonrpc":"2.0"}Content-Length: 276
+
+{"params":{"textDocument":{"uri":"file:///g%3A/Protramming/Lean/AnimateProofs/Animate.lean"},"range":{"start":{"line":29,"character":44},"end":{"line":29,"character":44}},"context":{"triggerKind":2,"diagnostics":[]}},"method":"textDocument/codeAction","jsonrpc":"2.0","id":43}Content-Length: 63
+
+{"params":{"id":42},"method":"$/cancelRequest","jsonrpc":"2.0"}Content-Length: 33
+
+{"method":"exit","jsonrpc":"2.0"}
