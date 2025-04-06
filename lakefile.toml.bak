@@ -6,6 +6,7 @@ defaultTargets = ["AnimateProofs"]
 [leanOptions]
 pp.unicode.fun = true # pretty-prints `fun a ↦ b`
 autoImplicit = false
+weak.trace.Elab.output = "out.json"
 
 [[require]]
 name = "mathlib"
