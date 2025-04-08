@@ -15,5 +15,17 @@ require "leanprover-community" / mathlib
 @[default_target] lean_lib AnimateProofs
 
 @[default_target]
+lean_lib Annotations
+
+@[default_target]
+lean_lib Input
+
+@[default_target]
+lean_lib StringMatching
+
+@[default_target]
+lean_lib HighlightSyntax
+
+@[default_target]
 lean_exe «Animate» where
   supportInterpreter := true
