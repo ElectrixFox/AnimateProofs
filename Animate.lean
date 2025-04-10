@@ -505,7 +505,7 @@ unsafe def processCommands : Frontend.FrontendM (List (Environment × InfoState)
 
 unsafe def processFile (config : Config) : IO Unit := do
   -- IO.println "Flag 1"
-  Lean.searchPathRef.set initSearchPath (← findSysroot)
+  Lean.initSearchPath (← Lean.findSysroot)
   -- IO.println "Flag 2"
   let mut input ← IO.FS.readFile config.file_path
   -- IO.println "Flag 3"
