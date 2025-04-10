@@ -12,9 +12,9 @@ namespace Animate
 structure Config where
   file_path : System.FilePath := "."
   const_name : Lean.Name := `Unknown
-  print_infotree : Bool := true
-  print_stage1 : Bool := true
-  print_stage2 : Bool := true
+  print_infotree : Bool := false
+  print_stage1 : Bool := false
+  print_stage2 : Bool := false
   min_match_len : Nat := 2
   nonmatchers : String := ""
 
@@ -505,7 +505,7 @@ unsafe def processCommands : Frontend.FrontendM (List (Environment × InfoState)
 
 unsafe def processFile (config : Config) : IO Unit := do
   -- IO.println "Flag 1"
-  Lean.searchPathRef.set compile_time_search_path%
+  Lean.searchPathRef.set initSearchPath (← findSysroot)
   -- IO.println "Flag 2"
   let mut input ← IO.FS.readFile config.file_path
   -- IO.println "Flag 3"
