@@ -18,9 +18,6 @@ require "leanprover-community" / mathlib
 lean_lib Annotations
 
 @[default_target]
-lean_lib Input
-
-@[default_target]
 lean_lib StringMatching
 
 @[default_target]

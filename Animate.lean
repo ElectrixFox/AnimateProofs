@@ -504,19 +504,19 @@ unsafe def processCommands : Frontend.FrontendM (List (Environment × InfoState)
     return (env', infoState) :: (←processCommands)
 
 unsafe def processFile (config : Config) : IO Unit := do
-  IO.println "Flag 1"
+  -- IO.println "Flag 1"
   Lean.searchPathRef.set compile_time_search_path%
-  IO.println "Flag 2"
+  -- IO.println "Flag 2"
   let mut input ← IO.FS.readFile config.file_path
-  IO.println "Flag 3"
+  -- IO.println "Flag 3"
   Lean.enableInitializersExecution
-  IO.println "Flag 4"
+  -- IO.println "Flag 4"
   let inputCtx := Lean.Parser.mkInputContext input config.file_path.toString
-  IO.println "Flag 5"
+  -- IO.println "Flag 5"
   let (header, parserState, messages) ← Lean.Parser.parseHeader inputCtx
-  IO.println "Flag 6"
+  -- IO.println "Flag 6"
   let (env, messages) ← Lean.Elab.processHeader header {} messages inputCtx
-  IO.println "Flag 7"
+  -- IO.println "Flag 7"
 
   if messages.hasErrors then
     for msg in messages.toList do
@@ -560,9 +560,6 @@ end infotrees
 end Animate
 
 unsafe def main (args : List String) : IO Unit := do
-  IO.println "Flag -1"
   let cfg ← Animate.parseArgs args.toArray
-
-  IO.println "Flag 0"
 
   Animate.processFile cfg
